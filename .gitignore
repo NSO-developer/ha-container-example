@@ -8,3 +8,5 @@ NSO-log-vol/*/*
 NSO-vol/*/*
 !NSO-vol/.gitkeep
 !NSO-vol/*/.gitkeep
+
+.DS_Store
