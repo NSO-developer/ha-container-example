@@ -1,5 +1,5 @@
-# Containerised NSO Example - HA
-Example use case of running HA with Containerised NSO
+# Containerized NSO Example - HA
+NSO can be deployed in your environment using a container, such as Docker. This repository shows a example use case of running built-in HA with Containerized NSO. It also present a recommended best practice of using Containerized NSO.
 
 ## Usage
 The Makefile has the following targets 
