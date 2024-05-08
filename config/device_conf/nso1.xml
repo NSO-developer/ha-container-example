@@ -1,0 +1,15 @@
+<config xmlns="http://tail-f.com/ns/config/1.0">
+  <high-availability xmlns="http://tail-f.com/ns/ncs">
+    <token>123</token>
+    <ha-node>
+      <id>nso1</id>
+      <address>10.0.0.2</address>
+      <nominal-role>primary</nominal-role>
+    </ha-node>
+    <ha-node>
+      <id>nso2</id>
+      <address>10.0.0.3</address>
+      <nominal-role>secondary</nominal-role>
+    </ha-node>
+  </high-availability>
+</config>

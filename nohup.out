@@ -1,0 +1,97 @@
+docker load -i ./images/nso-6.2.3.container-image-dev.linux.x86_64.tar.gz
+Loaded image: cisco-nso-dev:6.2.3
+docker load -i ./images/nso-6.2.3.container-image-prod.linux.x86_64.tar.gz
+Loaded image: cisco-nso-prod:6.2.3
+docker build -t mod-nso-prod:"6.2.3"  --no-cache --network=host --build-arg type="prod"  --build-arg ver="6.2.3"    --file Dockerfile .
+DEPRECATED: The legacy builder is deprecated and will be removed in a future release.
+            Install the buildx component to build images with BuildKit:
+            https://docs.docker.com/go/buildx/
+
+Sending build context to Docker daemon  1.391GB
+Step 1/6 : ARG  type ver
+Step 2/6 : FROM cisco-nso-$type:$ver
+ ---> 078dadcec879
+Step 3/6 : COPY requirements.txt /requirements.txt
+ ---> 53b3d8763a99
+Step 4/6 : RUN pip install --upgrade pip && 	pip install -r requirements.txt
+ ---> Running in 91dfbaa99019
+Requirement already satisfied: pip in /usr/local/lib/python3.11/site-packages (23.2.1)
+Collecting pip
+  Obtaining dependency information for pip from https://files.pythonhosted.org/packages/8a/6a/19e9fe04fca059ccf770861c7d5721ab4c2aebc539889e97c7977528a53b/pip-24.0-py3-none-any.whl.metadata
+  Downloading pip-24.0-py3-none-any.whl.metadata (3.6 kB)
+Downloading pip-24.0-py3-none-any.whl (2.1 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.1/2.1 MB 663.5 kB/s eta 0:00:00
+Installing collected packages: pip
+  Attempting uninstall: pip
+    Found existing installation: pip 23.2.1
+    Uninstalling pip-23.2.1:
+      Successfully uninstalled pip-23.2.1
+Successfully installed pip-24.0
+[91mWARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv
+[0m[91mWARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv
+[0mRemoving intermediate container 91dfbaa99019
+ ---> 9a4d4a488192
+Step 5/6 : RUN echo "alias ll='ls -alF'" >> ~/.bashrc
+ ---> Running in 107921c35e58
+Removing intermediate container 107921c35e58
+ ---> 7c216c1d5cbb
+Step 6/6 : EXPOSE 22 80 443 2024 830 4334 2022
+ ---> Running in e9fbcffe4a7a
+Removing intermediate container e9fbcffe4a7a
+ ---> b39b8b1df1ea
+Successfully built b39b8b1df1ea
+Successfully tagged mod-nso-prod:6.2.3
+
+What's Next?
+  1. Sign in to your Docker account → docker login
+  2. View a summary of image vulnerabilities and recommendations → docker scout quickview
+docker build -t mod-nso-dev:"6.2.3"  --no-cache --network=host --build-arg type="dev"  --build-arg ver="6.2.3"   --file Dockerfile .
+DEPRECATED: The legacy builder is deprecated and will be removed in a future release.
+            Install the buildx component to build images with BuildKit:
+            https://docs.docker.com/go/buildx/
+
+Sending build context to Docker daemon  1.391GB
+Step 1/6 : ARG  type ver
+Step 2/6 : FROM cisco-nso-$type:$ver
+ ---> 1f658387ac52
+Step 3/6 : COPY requirements.txt /requirements.txt
+ ---> 963637442033
+Step 4/6 : RUN pip install --upgrade pip && 	pip install -r requirements.txt
+ ---> Running in b19bf5497b92
+Requirement already satisfied: pip in /usr/local/lib/python3.11/site-packages (23.2.1)
+Collecting pip
+  Obtaining dependency information for pip from https://files.pythonhosted.org/packages/8a/6a/19e9fe04fca059ccf770861c7d5721ab4c2aebc539889e97c7977528a53b/pip-24.0-py3-none-any.whl.metadata
+  Downloading pip-24.0-py3-none-any.whl.metadata (3.6 kB)
+Downloading pip-24.0-py3-none-any.whl (2.1 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.1/2.1 MB 673.0 kB/s eta 0:00:00
+Installing collected packages: pip
+  Attempting uninstall: pip
+    Found existing installation: pip 23.2.1
+    Uninstalling pip-23.2.1:
+      Successfully uninstalled pip-23.2.1
+[91mWARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv
+[0mSuccessfully installed pip-24.0
+[91mWARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv
+[0mRemoving intermediate container b19bf5497b92
+ ---> 35967d43d91d
+Step 5/6 : RUN echo "alias ll='ls -alF'" >> ~/.bashrc
+ ---> Running in b26538237d0f
+Removing intermediate container b26538237d0f
+ ---> 491160701d85
+Step 6/6 : EXPOSE 22 80 443 2024 830 4334 2022
+ ---> Running in 14c904309a58
+Removing intermediate container 14c904309a58
+ ---> 0cdc63f7a715
+Successfully built 0cdc63f7a715
+Successfully tagged mod-nso-dev:6.2.3
+
+What's Next?
+  1. Sign in to your Docker account → docker login
+  2. View a summary of image vulnerabilities and recommendations → docker scout quickview
+docker run -d --name nso-prod -e ADMIN_USERNAME=admin -e ADMIN_PASSWORD=admin -e EXTRA_ARGS=--with-package-reload -v ./NSO-vol:/nso -v ./NSO-log-vol:/log mod-nso-prod:"6.2.3"
+465b50775a66b3155b9c242ec3fc1a71d878d9c28fa00d603c10af4201d3a9ed
+sleep 10
+docker stop nso-prod && docker rm nso-prod
+nso-prod
+nso-prod
+cp util/Makefile NSO-vol/run/packages/

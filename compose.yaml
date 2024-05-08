@@ -1,0 +1,89 @@
+services:
+     NSO-1:
+       image: mod-nso-prod:$VER
+       container_name: nso1_primary
+       profiles:
+             - prod
+       environment:
+             - EXTRA_ARGS=--with-package-reload
+             - ADMIN_USERNAME=admin
+             - ADMIN_PASSWORD=admin
+       networks:
+           NSO-net:
+             ipv4_address: 10.0.0.2
+       ports:
+             - "2023:2024"
+             - "8889:8888"
+       volumes:
+             - type: bind
+               source: './NSO-vol/NSO1'
+               target: '/nso'
+             - type: bind
+               source: './NSO-log-vol/NSO1'
+               target: '/log'
+       healthcheck:
+            test: ncs_cmd -c "wait-start 2"
+            interval: 5s
+            retries: 5
+            start_period: 10s
+            timeout: 10s
+
+     NSO-2:
+       image: mod-nso-prod:$VER
+       container_name: nso2_secondary
+       profiles:
+             - prod
+       environment:
+             - EXTRA_ARGS=--with-package-reload
+             - ADMIN_USERNAME=admin
+             - ADMIN_PASSWORD=admin
+       networks:
+           NSO-net:
+             ipv4_address: 10.0.0.3
+
+       ports:
+             - "2025:2024"
+             - "8887:8888"
+       volumes:
+             - type: bind
+               source: './NSO-vol/NSO2'
+               target: '/nso'
+             - type: bind
+               source: './NSO-log-vol/NSO2'
+               target: '/log'
+       healthcheck:
+            test: ncs_cmd -c "wait-start 2"
+            interval: 5s
+            retries: 5
+            start_period: 10s
+            timeout: 10s
+
+     BUILD-NSO-PKGS:
+            image: mod-nso-dev:$VER
+            container_name: nso-dev
+            network_mode: none
+            profiles:
+                - dev
+            volumes:
+                - type: bind
+                  source: './NSO-vol/NSO1'
+                  target: '/nso1'
+                - type: bind
+                  source: './NSO-log-vol/NSO1'
+                  target: '/log_nso1'
+                - type: bind
+                  source: './NSO-vol/NSO2'
+                  target: '/nso2'
+                - type: bind
+                  source: './NSO-log-vol/NSO1'
+                  target: '/log_nso2'
+
+
+
+networks:
+  NSO-net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.0.0.0/16
+          gateway: 10.0.0.1
