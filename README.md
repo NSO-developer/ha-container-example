@@ -52,3 +52,19 @@ Start Juniper style CLI on Secondary NSO2
 6. Start containers and bring up the HA with "make start"
 7. Build the packages in the development images "make compile_packages"
 8. Test the packages inside the production images "make cli-c_nso1/nso2" or Juniper CLI "make cli-j_nso1/nso2"
+9. Check HA status via "show high-availability" in "make cli-c_nso1/nso2" or Juniper CLI "make cli-j_nso1/nso2"
+```
+$ make cli-c_nso1
+docker exec -it nso1_primary ncs_cli -C -u admin
+
+User admin last logged in 2024-05-24T08:06:51.314469+00:00, to ad7f7a2fc0a4, from 127.0.0.1 using cli-console
+admin connected from 127.0.0.1 using console on ad7f7a2fc0a4
+admin@ncs# show high-availability 
+high-availability enabled
+high-availability status mode primary
+high-availability status current-id nso1
+high-availability status assigned-role primary
+high-availability status read-only-mode false
+high-availability status connected-secondary nso2
+ address 10.0.0.3
+```

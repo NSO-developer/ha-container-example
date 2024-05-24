@@ -3,8 +3,8 @@ ENABLED_SERVICES=NSO-1 NSO-2 BUILD-NSO-PKGS
 ARCH=x86_64
 
 build: 
-        docker load -i ./images/nso-${VER}.container-image-dev.linux.${ARCH}.tar.gz
-        docker load -i ./images/nso-${VER}.container-image-prod.linux.${ARCH}.tar.gz
+	docker load -i ./images/nso-${VER}.container-image-dev.linux.${ARCH}.tar.gz
+	docker load -i ./images/nso-${VER}.container-image-prod.linux.${ARCH}.tar.gz
 	docker build -t mod-nso-prod:${VER}  --no-cache --network=host --build-arg type="prod"  --build-arg ver=${VER}    --file Dockerfile .
 	docker build -t mod-nso-dev:${VER}  --no-cache --network=host --build-arg type="dev"  --build-arg ver=${VER}   --file Dockerfile .
 	docker run -d --name nso-prod -e ADMIN_USERNAME=admin -e ADMIN_PASSWORD=admin -e EXTRA_ARGS=--with-package-reload-force -v ./NSO-vol/NSO1:/nso:Z -v ./NSO-log-vol/NSO1:/log:Z mod-nso-prod:${VER}
