@@ -1,17 +1,21 @@
 VER="6.2.3"
 ENABLED_SERVICES=NSO-1 NSO-2 BUILD-NSO-PKGS
+ARCH=x86_64
 
-
-build:
-	docker load -i ./images/nso-6.2.3.container-image-dev.linux.x86_64.tar.gz
-	docker load -i ./images/nso-6.2.3.container-image-prod.linux.x86_64.tar.gz
+build: 
+        docker load -i ./images/nso-${VER}.container-image-dev.linux.${ARCH}.tar.gz
+        docker load -i ./images/nso-${VER}.container-image-prod.linux.${ARCH}.tar.gz
 	docker build -t mod-nso-prod:${VER}  --no-cache --network=host --build-arg type="prod"  --build-arg ver=${VER}    --file Dockerfile .
 	docker build -t mod-nso-dev:${VER}  --no-cache --network=host --build-arg type="dev"  --build-arg ver=${VER}   --file Dockerfile .
-	docker run -d --name nso-prod -e ADMIN_USERNAME=admin -e ADMIN_PASSWORD=admin -e EXTRA_ARGS=--with-package-reload-force -v ./NSO-vol/NSO1:/nso -v ./NSO-log-vol/NSO1:/log mod-nso-prod:${VER}
+	docker run -d --name nso-prod -e ADMIN_USERNAME=admin -e ADMIN_PASSWORD=admin -e EXTRA_ARGS=--with-package-reload-force -v ./NSO-vol/NSO1:/nso:Z -v ./NSO-log-vol/NSO1:/log:Z mod-nso-prod:${VER}
 	bash check_nso1_status.sh
+	docker exec nso-prod bash -c 'chmod 777 -R /nso/*'
+	docker exec nso-prod bash -c 'chmod 777 -R /log/*'
 	docker stop nso-prod && docker rm nso-prod
-	docker run -d --name nso-prod -e ADMIN_USERNAME=admin -e ADMIN_PASSWORD=admin -e EXTRA_ARGS=--with-package-reload-force -v ./NSO-vol/NSO2:/nso -v ./NSO-log-vol/NSO2:/log mod-nso-prod:${VER}
+	docker run -d --name nso-prod -e ADMIN_USERNAME=admin -e ADMIN_PASSWORD=admin -e EXTRA_ARGS=--with-package-reload-force -v ./NSO-vol/NSO2:/nso:Z -v ./NSO-log-vol/NSO2:/log:Z mod-nso-prod:${VER}
 	bash check_nso1_status.sh
+	docker exec nso-prod bash -c 'chmod 777 -R /nso/*'
+	docker exec nso-prod bash -c 'chmod 777 -R /log/*'
 	docker stop nso-prod && docker rm nso-prod
 	cp util/Makefile NSO-vol/NSO1/run/packages/
 	cp util/Makefile NSO-vol/NSO2/run/packages/
@@ -40,18 +44,19 @@ clean_cdb:
 
 
 start:
-	export VER=${VER} ; docker-compose up ${ENABLED_SERVICES} -d
+	export VER=${VER} ; docker compose up ${ENABLED_SERVICES} -d
 	bash check_status.sh
 	cd config/ha_enable; sh nso1.sh
 	sleep 5
 	cd config/ha_enable; sh nso2.sh
 
 stop:
-	export VER=${VER} ;docker-compose down  ${ENABLED_SERVICES}
+	export VER=${VER} ;docker compose down  ${ENABLED_SERVICES}
 
 
 compile_packages:
-	docker exec -it nso-dev make all -C /nso/run/packages
+	docker exec -it nso-dev make all -C /nso1/run/packages
+	docker exec -it nso-dev make all -C /nso2/run/packages
 
 cli-c_nso1:
 	docker exec -it nso1_primary ncs_cli -C -u admin

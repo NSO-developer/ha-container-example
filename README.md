@@ -47,7 +47,8 @@ Start Juniper style CLI on Secondary NSO2
 1. Copy the development and production image in the images folder
 2. Set Python dependency in requirements.txt
 3. Set the dependencies that need to be installed via yum and dnf in the Dockerfile
-4. "make build" to build the environment and import the images
-5. Start containers and bring up the HA with "make start" 
-6. Build the packages in the development images "make compile_packages"
-7. Test the packages inside the production images "make cli-c_nso1/nso2" or Juniper CLI "make cli-j_nso1/nso2"
+4. Modify the "VER" and "ARCH" variable in Makefile. "VER" is the Containerized NSO version and "ARCH" is the CPU Architecture.
+5. "make build" to build the environment and import the images
+6. Start containers and bring up the HA with "make start"
+7. Build the packages in the development images "make compile_packages"
+8. Test the packages inside the production images "make cli-c_nso1/nso2" or Juniper CLI "make cli-j_nso1/nso2"

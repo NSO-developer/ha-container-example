@@ -10,3 +10,4 @@ NSO-vol/*/*
 !NSO-vol/*/.gitkeep
 
 .DS_Store
+*.swp
