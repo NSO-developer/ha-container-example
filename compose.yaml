@@ -75,7 +75,7 @@ services:
                   source: './NSO-vol/NSO2'
                   target: '/nso2'
                 - type: bind
-                  source: './NSO-log-vol/NSO1'
+                  source: './NSO-log-vol/NSO2'
                   target: '/log_nso2'
 
 
