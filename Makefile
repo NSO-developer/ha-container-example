@@ -7,15 +7,21 @@ build:
 	docker load -i ./images/nso-${VER}.container-image-prod.linux.${ARCH}.tar.gz
 	docker build -t mod-nso-prod:${VER}  --no-cache --network=host --build-arg type="prod"  --build-arg ver=${VER}    --file Dockerfile .
 	docker build -t mod-nso-dev:${VER}  --no-cache --network=host --build-arg type="dev"  --build-arg ver=${VER}   --file Dockerfile .
-	docker run -d --name nso-prod -e ADMIN_USERNAME=admin -e ADMIN_PASSWORD=admin -e EXTRA_ARGS=--with-package-reload-force -v ./NSO-vol/NSO1:/nso:Z -v ./NSO-log-vol/NSO1:/log:Z mod-nso-prod:${VER}
+	docker run -d --name nso-prod -e ADMIN_USERNAME=admin -e ADMIN_PASSWORD=admin -e EXTRA_ARGS=--with-package-reload-force  -v ./NSO-log-vol/NSO1:/log:Z mod-nso-prod:${VER}
 	bash check_nso1_status.sh
 	docker exec nso-prod bash -c 'chmod 777 -R /nso/*'
 	docker exec nso-prod bash -c 'chmod 777 -R /log/*'
+	docker cp nso-prod:/nso/ NSO-vol/
+	mv NSO-vol/nso NSO-vol/NSO1
+	rm -rf NSO-vol/nso
 	docker stop nso-prod && docker rm nso-prod
-	docker run -d --name nso-prod -e ADMIN_USERNAME=admin -e ADMIN_PASSWORD=admin -e EXTRA_ARGS=--with-package-reload-force -v ./NSO-vol/NSO2:/nso:Z -v ./NSO-log-vol/NSO2:/log:Z mod-nso-prod:${VER}
+	docker run -d --name nso-prod -e ADMIN_USERNAME=admin -e ADMIN_PASSWORD=admin -e EXTRA_ARGS=--with-package-reload-force  -v ./NSO-log-vol/NSO2:/log:Z mod-nso-prod:${VER}
 	bash check_nso1_status.sh
 	docker exec nso-prod bash -c 'chmod 777 -R /nso/*'
 	docker exec nso-prod bash -c 'chmod 777 -R /log/*'
+	docker cp nso-prod:/nso/ NSO-vol/
+	mv NSO-vol/nso NSO-vol/NSO2
+	rm -rf NSO-vol/nso
 	docker stop nso-prod && docker rm nso-prod
 	cp util/Makefile NSO-vol/NSO1/run/packages/
 	cp util/Makefile NSO-vol/NSO2/run/packages/
@@ -34,7 +40,7 @@ clean:
 	-docker image rm -f mod-nso-dev:${VER} 
 
 clean_run:
-	rm -rf ./NSO-vol/*/* 
+	rm -rf ./NSO-vol/* 
 
 clean_log:
 	rm -rf ./NSO-log-vol/*/*	
