@@ -1,9 +1,10 @@
-VER="6.2.3"
+VER="6.4.1"
 ENABLED_SERVICES=NSO-1 NSO-2 BUILD-NSO-PKGS
 ARCH=x86_64
+BUILD_ARG=build
 
 build: 
-	docker load -i ./images/nso-${VER}.container-image-dev.linux.${ARCH}.tar.gz
+	docker load -i ./images/nso-${VER}.container-image-${BUILD_ARG}.linux.${ARCH}.tar.gz
 	docker load -i ./images/nso-${VER}.container-image-prod.linux.${ARCH}.tar.gz
 	docker build -t mod-nso-prod:${VER}  --no-cache --network=host --build-arg type="prod"  --build-arg ver=${VER}    --file Dockerfile .
 	docker build -t mod-nso-dev:${VER}  --no-cache --network=host --build-arg type="dev"  --build-arg ver=${VER}   --file Dockerfile .
