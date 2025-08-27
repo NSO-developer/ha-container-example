@@ -59,11 +59,11 @@ services:
             timeout: 10s
 
      BUILD-NSO-PKGS:
-            image: mod-nso-dev:$VER
-            container_name: nso-dev
+            image: mod-nso-build:$VER
+            container_name: nso-build
             network_mode: none
             profiles:
-                - dev
+                - build
             volumes:
                 - type: bind
                   source: './NSO-vol/NSO1'

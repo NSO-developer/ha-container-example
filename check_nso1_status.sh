@@ -1,7 +1,7 @@
 #!/bin/bash
 
 
-var1=$(docker exec -i nso-prod ncs_cli -C -u admin <<< "exit" &> /dev/null ; echo $?)
+var1=$(docker exec --user root -i nso-prod ncs_cli -C -u admin <<< "exit" &> /dev/null ; echo $?)
 Data1=$(($var1))
 
 echo "NSO Status: "
@@ -9,7 +9,7 @@ echo -ne "NOT READY: NSO1 Status: $var1\033[0K\r"
 
 while [ $Data1 -ne 0 ]
 do
-var1=$(docker exec -i nso-prod ncs_cli -C -u admin <<< "exit" &> /dev/null ; echo $?)
+var1=$(docker exec --user root -i nso-prod ncs_cli -C -u admin <<< "exit" &> /dev/null ; echo $?)
 Data1=$(($var1))
 
 echo -ne "NOT READY: NSO1 Status: $var1\033[0K\r"
